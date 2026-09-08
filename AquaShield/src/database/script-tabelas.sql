@@ -9,9 +9,15 @@ CREATE TABLE empresa (
     email VARCHAR(50)
 ); 
 
-CREATE TABLE cargo (
-idCargo INT PRIMARY KEY AUTO_INCREMENT,
-nome VARCHAR(50) NOT NULL
+CREATE TABLE ETA(
+idETA INT PRIMARY KEY AUTO_INCREMENT,
+pais VARCHAR(100),
+numero VARCHAR(150),
+estado VARCHAR(100),
+rua VARCHAR(50),
+CEP CHAR(8),
+fkEmpresa INT ,
+CONSTRAINT fkETAempresa FOREIGN KEY(fkEmpresa) REFERENCES empresa(idEmpresa)
 );
 
 CREATE TABLE usuario (
@@ -19,50 +25,46 @@ idUsuario INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(50),
 email VARCHAR(50),
 senha VARCHAR(50),
-fkCargo INT,
+cargo VARCHAR(100)NOT NULL CHECK (cargo IN ("Gestor", "Técnico", "Controlador")),
 fkEmpresa INT,
-CONSTRAINT fkUsuarioCargo FOREIGN KEY (fkCargo) REFERENCES cargo(idCargo),
-CONSTRAINT fkUsuarioEmpresa FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
+fkETA INT,
+CONSTRAINT fkUsuarioEmpresa FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
+CONSTRAINT fkUsuarioETA FOREIGN KEY (fkETA) REFERENCES ETA(idETA)
 );
 
 CREATE TABLE maquina(
 idMaquina INT PRIMARY KEY AUTO_INCREMENT,
-nome VARCHAR(100),
+numeracao VARCHAR(100),
+IPMac CHAR(12),
 fkEmpresa INT,
 CONSTRAINT fkMaquinaEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa));
 
 
-CREATE TABLE processador(
- idProcessador INT PRIMARY KEY AUTO_INCREMENT,
- dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
- temperatura DECIMAL(3,1),
- frequencia DECIMAL(7,2),
- porcentagemUso DECIMAL(5,2),
- fkMaquina INT,
- CONSTRAINT fkProcessadorMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina)
- );
- 
- 
- CREATE TABLE memoria(
- idMemoria INT PRIMARY KEY AUTO_INCREMENT,
- dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
- memoria_usada INT,
- memoria_disponivel INT,
- fkMaquina INT,
- CONSTRAINT fkMemoriaMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina)
- 
- );
- 
- CREATE TABLE disco(
- idDisco INT PRIMARY KEY AUTO_INCREMENT,
- dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
- discoUso INT,
- espaçoLivre INT,
- fkMaquina INT,
- CONSTRAINT fkDiscoMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina)
- 
- );
- 
-INSERT INTO cargo (idCargo,nome) VALUES
-(1,"Técnico de Automação"),
-(2,"Controlador de Sistemas De Saneamento")
+CREATE TABLE componente(
+idComponente INT PRIMARY KEY AUTO_INCREMENT,
+nomeComponente VARCHAR(50),
+unidadeMedida VARCHAR(100)
+);
+
+CREATE TABLE registro(
+idRegistro INT PRIMARY KEY AUTO_INCREMENT,
+fkMaquina INT,
+fkComponente INT,
+valorCaptura VARCHAR(500),
+valorMaximo VARCHAR(100),
+dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT fkMaquinaEmpresaRegistro FOREIGN KEY (fkMaquina) REFERENCES maquina(idMaquina),
+CONSTRAINT fkComponente FOREIGN KEY (fkComponente) REFERENCES Componente(idComponente)
+);
+
+CREATE TABLE alertas (
+    idAlertas INT PRIMARY KEY AUTO_INCREMENT,
+    fkMaquina INT,
+    fkComponente INT,
+    descricao VARCHAR(100),
+    nivel VARCHAR(45),
+    dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fkAlertasMaquina FOREIGN KEY (fkMaquina) REFERENCES maquina(idMaquina),
+    CONSTRAINT fkAlertasComponente FOREIGN KEY (fkComponente) REFERENCES componente(idComponente)
+);
+
