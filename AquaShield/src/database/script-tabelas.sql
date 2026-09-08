@@ -40,37 +40,30 @@ fkEmpresa INT,
 CONSTRAINT fkMaquinaEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa));
 
 
-CREATE TABLE Processador(
- id INT PRIMARY KEY AUTO_INCREMENT,
- temperatura DECIMAL(3,1),
- frequencia DECIMAL(7,2),
- porcentagem_de_uso DECIMAL(5,2),
- fkMaquina INT,
- fkEmpresa INT,
- CONSTRAINT fkMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina),
- CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa));
- 
- 
- CREATE TABLE memoria(
- idMemoria INT PRIMARY KEY AUTO_INCREMENT,
- memoria_usada INT,
- memoria_disponivel INT,
- fkMaquina INT,
- fkEmpresa INT,
- CONSTRAINT fkMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina),
- CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
- );
- 
- CREATE TABLE disco(
- idDisco INT PRIMARY KEY AUTO_INCREMENT,
- discoUso INT,
- espaçoLivre INT,
- fkMaquina INT,
- fkEmpresa INT,
- CONSTRAINT fkMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina),
- CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
- );
- 
-INSERT INTO cargo (id,nome) VALUES
-(1,"Técnico de Automação"),
-(2,"Controlador de Sistemas De Saneamento")
+CREATE TABLE componente(
+idComponente INT PRIMARY KEY AUTO_INCREMENT,
+nomeComponente VARCHAR(50),
+unidadeMedida VARCHAR(100)
+);
+
+CREATE TABLE registro(
+idRegistro INT PRIMARY KEY AUTO_INCREMENT,
+fkMaquina INT,
+fkComponente INT,
+valorCaptura VARCHAR(500),
+valorMaximo VARCHAR(100),
+dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT fkMaquinaEmpresaRegistro FOREIGN KEY (fkMaquina) REFERENCES maquina(idMaquina),
+CONSTRAINT fkComponente FOREIGN KEY (fkComponente) REFERENCES Componente(idComponente)
+);
+
+CREATE TABLE alertas (
+    idAlertas INT PRIMARY KEY AUTO_INCREMENT,
+    fkMaquina INT,
+    fkComponente INT,
+    descricao VARCHAR(100),
+    nivel VARCHAR(45),
+    dtHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fkAlertasMaquina FOREIGN KEY (fkMaquina) REFERENCES maquina(idMaquina),
+    CONSTRAINT fkAlertasComponente FOREIGN KEY (fkComponente) REFERENCES componente(idComponente)
+);
