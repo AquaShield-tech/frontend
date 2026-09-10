@@ -9,6 +9,16 @@ CREATE TABLE empresa (
     email VARCHAR(50)
 ); 
 
+CREATE TABLE CCO (
+idCCO INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(150),
+pais VARCHAR(100),
+estado VARCHAR(100),
+cep CHAR(8),
+FkEmpresa INT,
+CONSTRAINT fkCCOempresa FOREIGN KEY(fkEmpresa) REFERENCES empresa(idEmpresa)
+);
+
 CREATE TABLE ETA(
 idETA INT PRIMARY KEY AUTO_INCREMENT,
 pais VARCHAR(100),
@@ -16,9 +26,10 @@ numero VARCHAR(150),
 estado VARCHAR(100),
 rua VARCHAR(50),
 CEP CHAR(8),
-fkEmpresa INT ,
-CONSTRAINT fkETAempresa FOREIGN KEY(fkEmpresa) REFERENCES empresa(idEmpresa)
+fkCCO INT ,
+CONSTRAINT fkCCOETA FOREIGN KEY(fkCCO) REFERENCES CCO(idCCO)
 );
+
 
 CREATE TABLE usuario (
 idUsuario INT PRIMARY KEY AUTO_INCREMENT,
@@ -26,18 +37,21 @@ nome VARCHAR(50),
 email VARCHAR(50),
 senha VARCHAR(50),
 cargo VARCHAR(100)NOT NULL CHECK (cargo IN ("Gestor", "Técnico", "Controlador")),
+fkCCO int,
 fkEmpresa INT,
 fkETA INT,
+CONSTRAINT fkUsuarioCCO FOREIGN KEY (fkCCO) REFERENCES CCO(idCCO),
 CONSTRAINT fkUsuarioEmpresa FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
 CONSTRAINT fkUsuarioETA FOREIGN KEY (fkETA) REFERENCES ETA(idETA)
 );
+
 
 CREATE TABLE maquina(
 idMaquina INT PRIMARY KEY AUTO_INCREMENT,
 numeracao VARCHAR(100),
 IPMac CHAR(12),
-fkEmpresa INT,
-CONSTRAINT fkMaquinaEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa));
+fkETA INT,
+CONSTRAINT fkMaquinaETA FOREIGN KEY (fkETA) REFERENCES CCO(idETA));
 
 
 CREATE TABLE componente(
@@ -45,6 +59,7 @@ idComponente INT PRIMARY KEY AUTO_INCREMENT,
 nomeComponente VARCHAR(50),
 unidadeMedida VARCHAR(100)
 );
+
 
 CREATE TABLE registro(
 idRegistro INT PRIMARY KEY AUTO_INCREMENT,
@@ -67,3 +82,7 @@ CREATE TABLE alertas (
     CONSTRAINT fkAlertasMaquina FOREIGN KEY (fkMaquina) REFERENCES maquina(idMaquina),
     CONSTRAINT fkAlertasComponente FOREIGN KEY (fkComponente) REFERENCES componente(idComponente)
 );
+
+
+INSERT INTO empresa VALUES
+(1,"Sabesp","1234567891011121314","sabesp@gmail.com");
